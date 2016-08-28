@@ -76,26 +76,40 @@
         
         // Step 3: Use the Quizlet API with the received token
         // ===================================================
-        echo "<p>Step 3 completed - Authorized as {$_SESSION['username']}.</p>";
         $curl = curl_init("https://api.quizlet.com/2.0/users/{$_SESSION['username']}/sets");
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer '.$_SESSION['access_token']]);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $data = json_decode(curl_exec($curl));
+        $json = curl_exec($curl);
+        
+        $data = json_decode($json, true);
         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         
-        if (floor($responseCode / 100) !== 2) { // A non 200-level code is an error (our API typically responds with 200 and 204 on success)
+        if (floor($responseCode / 100) != 2) { // A non 200-level code is an error (our API typically responds with 200 and 204 on success)
         	displayError((array) $data, 3);
+        	echo "Namaste";
         	exit();
         }
         
         // Display the user's sets
         echo "<p>Found ".count($data)." sets</p>";
-        echo "<ol>";
-        foreach ($data as $set) {
-        	echo "<li>".htmlspecialchars($set->title)."</li>"; // Notice that we ensure HTML is displayed safely
+        
+        foreach ($data as $key => $value) {
+            //print_r($value);
+            $title = 'title';
+            $url = 'url';
+            $created_by = 'created_by';
+            $term_count = 'term_count';
+            echo "<ol>";
+        	echo "<li>{$value[$title]}</li>";
+        	echo "<li>{$value[$url]}</li>";
+        	echo "<li>{$value[$created_by]}</li>";
+        	echo "<li>{$value[$term_count]}</li>";
+        	echo "</ol>";
+        	
+        	// Notice that we ensure HTML is displayed safely
         }
-        echo "</ol>"; 
+        ; 
         ?>
     </body>
     
