@@ -3,6 +3,9 @@
     <title>
         Welcome to Pronunciator!
     </title>
+    <head>
+        <script src="dist/recorder.min.js"></script>
+    </head>
     <body>
       <?php
         // Your credentials
@@ -80,18 +83,13 @@
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer '.$_SESSION['access_token']]);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         $json = curl_exec($curl);
-        
         $data = json_decode($json, true);
         $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
-        
         if (floor($responseCode / 100) != 2) { // A non 200-level code is an error (our API typically responds with 200 and 204 on success)
         	displayError((array) $data, 3);
-        	echo "Namaste";
         	exit();
         }
-        
-        // Display the user's sets
         echo "<p>Found ".count($data)." sets</p>";
         
         foreach ($data as $key => $value) {
@@ -108,9 +106,28 @@
         	echo "</ol>";
         	
         	// Notice that we ensure HTML is displayed safely
+        };
+        
+        $curl = curl_init("https://api.quizlet.com/2.0/users/{$_SESSION['username']}/classes");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Authorization: Bearer '.$_SESSION['access_token']]);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $json = curl_exec($curl);
+        //echo "{$json}";
+        $data = json_decode($json, true);
+        $responseCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        
+        foreach ($data as $key => $value) {
+            $sets = 'sets';
+            
         }
-        ; 
         ?>
+ 
+ 
+ 
+      
+
+        </script>        
     </body>
     
 </html>
